@@ -14,7 +14,7 @@ from collections import deque
 import time
 import json
 
-class Publisher:
+class Publisher_sensor:
     def __init__(self, brokerIp, brokerPort, pubtopic):
         self.__brokerIp = brokerIp
         self.__brokerPort = brokerPort
@@ -51,19 +51,3 @@ class Publisher:
         b64_bytes = base64.b64encode(bytes)
         self.client.publish(self.pubtopic, b64_bytes)
 #
-if __name__ == "__main__":
-    queue = deque()
-    pcf8591 = Pcf8591(0x48)
-    gas = Gas(pcf8591, ain=2)
-    thermister = Thermistor(pcf8591, ain=1)
-    tracking = Tracking(32)
-    photoresister = Photoresister(pcf8591, ain=0)
-    ultra = HcSr04(trigpin=38, echopin=40)
-    publisher = Publisher("192.168.3.105", 1883, '/sensor')
-    publisher.connect()
-
-    while True:
-        queue.append({"Gas":gas.read(), "Thermister":thermister.read(), "Ultrasonic":ultra.read(), "Photoresister":photoresister.read(), "Tracking":tracking.read()})
-        print(queue)
-        time.sleep(0.5)
-        publisher.client.publish(publisher.pubtopic, payload=json.dumps(queue.popleft()))

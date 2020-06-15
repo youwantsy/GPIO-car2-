@@ -6,7 +6,7 @@ import json
 
 
 #v = cv2.VideoCapture(0)
-class Publisher:
+class Publisher_camera:
     def __init__(self, brokerIp, brokerPort, pubtopic):
         self.__brokerIp = brokerIp
         self.__brokerPort = brokerPort
@@ -43,28 +43,5 @@ class Publisher:
         b64_bytes = base64.b64encode(bytes)
         self.client.publish(self.pubtopic , b64_bytes)
 #
-if __name__ == "__main__":
-    video = cv2.VideoCapture(0)
-    video.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
-    video.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
-    publiser = Publisher("192.168.3.177", 1883, '/camerapub')
-    publiser.connect()
 
-    buffer_arr = bytearray[1024]
-    while True:
-        if video.isOpened():
-            retval, data = video.read()
-            if not retval:
-                print("read fail")
-                break
-
-            datadic = {"camera",data}
-
-            publiser.sendBase64()
-        else:
-            break
-
-    video.release()
-    publiser.disconnect()
-    print("Program exit")
