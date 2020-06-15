@@ -13,7 +13,6 @@ from Pcf8591 import Pcf8591
 from collections import deque
 import time
 import json
-import Sub
 
 class Sensing_Rover:
     def __init__(self):

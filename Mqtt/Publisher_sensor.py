@@ -13,7 +13,7 @@ from Pcf8591 import Pcf8591
 from collections import deque
 import time
 import json
-from Sensing_Rover.Sensing_Rover import Sensing_Rover
+
 class Publisher:
     def __init__(self, brokerIp, brokerPort, pubtopic):
         self.__brokerIp = brokerIp

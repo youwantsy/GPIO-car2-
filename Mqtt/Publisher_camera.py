@@ -51,17 +51,13 @@ if __name__ == "__main__":
     publiser = Publisher("192.168.3.177", 1883, '/camerapub')
     publiser.connect()
 
-    buffer_arr = bytearray[1024]
     while True:
         if video.isOpened():
             retval, data = video.read()
             if not retval:
                 print("read fail")
                 break
-
-            datadic = {"camera",data}
-
-            publiser.sendBase64()
+            publiser.sendBase64(data)
         else:
             break
 
