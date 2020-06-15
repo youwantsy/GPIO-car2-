@@ -2,7 +2,7 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="pi@192.168.3.14:22">
     <serverData>
-      <paths name="jetson@192.168.3.237:22">
+      <paths name="jetson@192.168.3.226:22">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

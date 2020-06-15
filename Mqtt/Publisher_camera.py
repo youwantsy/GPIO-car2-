@@ -3,11 +3,12 @@ import cv2
 import paho.mqtt.client as mqtt
 import base64
 
+#v = cv2.VideoCapture(0)
 class Publisher:
     def __init__(self, brokerIp, brokerPort, pubtopic):
         self.__brokerIp = brokerIp
         self.__brokerPort = brokerPort
-        self.__pubtopic = pubtopic
+        self.pubtopic = pubtopic
 
     def __run(self):
         self.client = mqtt.Client()
@@ -38,8 +39,8 @@ class Publisher:
             print("image encoding fail")
             return
         b64_bytes = base64.b64encode(bytes)
-        self.client.publish(self.__pubtopic , b64_bytes)
-
+        self.client.publish(self.pubtopic , b64_bytes)
+#
 if __name__ == "__main__":
     video = cv2.VideoCapture(0)
     video.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
@@ -50,7 +51,7 @@ if __name__ == "__main__":
 
     while True:
         if video.isOpened():
-            retval, data=video.read()
+            retval, data = video.read()
             if not retval:
                 print("read fail")
                 break
