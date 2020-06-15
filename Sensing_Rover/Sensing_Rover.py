@@ -26,7 +26,6 @@ class Sensing_Rover():
             print(queue)
             time.sleep(0.5)
             publisher_sensor.client.publish(publisher_sensor.pubtopic, payload=json.dumps(queue.popleft()))
-            print("실행")
 
     def send(self):
         pass
