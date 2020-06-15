@@ -9,17 +9,10 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="pi">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/home/pi/Projects" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="pi@192.168.3.14:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pi/Projects" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/pi/Project" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

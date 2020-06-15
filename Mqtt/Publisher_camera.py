@@ -2,6 +2,8 @@ import threading
 import cv2
 import paho.mqtt.client as mqtt
 import base64
+import json
+
 
 #v = cv2.VideoCapture(0)
 class Publisher:
@@ -46,16 +48,20 @@ if __name__ == "__main__":
     video.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
     video.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
-    publiser = Publisher("192.168.3.105", 1883, '/camerapub')
+    publiser = Publisher("192.168.3.177", 1883, '/camerapub')
     publiser.connect()
 
+    buffer_arr = bytearray[1024]
     while True:
         if video.isOpened():
             retval, data = video.read()
             if not retval:
                 print("read fail")
                 break
-            publiser.sendBase64(data)
+
+            datadic = {"camera",data}
+
+            publiser.sendBase64()
         else:
             break
 
