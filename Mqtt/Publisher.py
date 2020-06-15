@@ -41,12 +41,11 @@ class Publisher:
         self.client.publish(self.__pubtopic , b64_bytes)
 
 if __name__ == "__main__":
-    print("실행1")
-    publiser = Publisher("192.168.3.177", 1883, '/camerapub')
-    print("실행2")
-    publiser.connect()
-    print("connect")
     video = cv2.VideoCapture(0)
+
+    publiser = Publisher("192.168.3.105", 1883, '/camerapub')
+    publiser.connect()
+
     while True:
         if video.isOpened():
             retval, data=video.read()
@@ -56,6 +55,7 @@ if __name__ == "__main__":
             publiser.sendBase64(data)
         else:
             break
+
     video.release()
     publiser.disconnect()
     print("Program exit")
