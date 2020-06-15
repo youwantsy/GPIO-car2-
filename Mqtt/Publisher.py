@@ -42,6 +42,8 @@ class Publisher:
 
 if __name__ == "__main__":
     video = cv2.VideoCapture(0)
+    video.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+    video.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
     publiser = Publisher("192.168.3.105", 1883, '/camerapub')
     publiser.connect()

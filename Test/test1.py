@@ -108,3 +108,6 @@ sg90_camera_width.angle(90)
 sg90_camera_height.angle(12)
 sg90_wheel.angle(90)
 sg90_ultrasonic.angle(80)
+
+dc_right.stop()
+dc_left.stop()
