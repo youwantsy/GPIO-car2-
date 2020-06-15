@@ -59,7 +59,7 @@ if __name__ == "__main__":
     tracking = Tracking(32)
     photoresister = Photoresister(pcf8591, ain=0)
     ultra = HcSr04(trigpin=38, echopin=40)
-    publisher = Publisher("192.168.3.177", 1883, '/sensor')
+    publisher = Publisher("192.168.3.105", 1883, '/sensor')
     publisher.connect()
 
     while True:
