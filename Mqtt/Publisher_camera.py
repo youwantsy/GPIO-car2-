@@ -21,8 +21,10 @@ class Publisher_camera:
 
     def connect(self):
         print("Vconnect")
-        thread = threading.Thread(target=self.__run, daemon=True)
+        thread = threading.Thread(target=self.read_camera, daemon=True)
         thread.start()
+        thread2 = threading.Thread(target=self.__run, daemon=True)
+        thread2.start()
 
     def disconnect(self):
         self.client.disconnect()
@@ -43,7 +45,11 @@ class Publisher_camera:
         b64_bytes = base64.b64encode(bytes)
         self.client.publish(self.pubtopic , b64_bytes)
 
-    def read_camera(self,video):
+    def read_camera(self):
+        video = cv2.VideoCapture(0)
+        video.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+        video.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+        print("된다")
         while True:
             if video.isOpened():
                 retval, data = video.read()

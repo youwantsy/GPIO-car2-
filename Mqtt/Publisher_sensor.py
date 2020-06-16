@@ -27,11 +27,12 @@ class Publisher_sensor:
         self.client.connect(self.__brokerIp, self.__brokerPort)
         self.client.loop_forever()
 
-    def connect(self):
+    def connect(self,gas ,thermister, photoresister, tracking, ultra,queue):
         print("Sconnect")
-        thread = threading.Thread(target=self.__run, daemon=True)
+        thread = threading.Thread(target=self.read_sensor, daemon=True ,args=[gas ,thermister, photoresister, tracking, ultra,queue])
         thread.start()
-
+        thread2 = threading.Thread(target=self.__run, daemon=True)
+        thread2.start()
     def disconnect(self):
         self.client.disconnect()
 
@@ -41,15 +42,6 @@ class Publisher_sensor:
     def __on_disconnect(self, client, userdata, rc):
         print("SImageMqttClient mqtt broker disconnected")
 
-    def sendBase64(self, frame):
-        if self.client.is_connected() is False: # jpg -> cv2.imeconde ->  base64.b64encode
-            return
-        retval, bytes = cv2.imencode('.jpg', frame)
-        if not retval:
-            print("image encoding fail")
-            return
-        b64_bytes = base64.b64encode(bytes)
-        self.client.publish(self.pubtopic, b64_bytes)
 
     def read_sensor(self,gas ,thermister, photoresister, tracking, ultra, queue):
         while True:
