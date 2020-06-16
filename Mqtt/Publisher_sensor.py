@@ -57,3 +57,4 @@ class Publisher_sensor:
             self.client.publish(self.pubtopic, payload=json.dumps(queue.popleft()))
             time.sleep(0.3)
 #
+#
