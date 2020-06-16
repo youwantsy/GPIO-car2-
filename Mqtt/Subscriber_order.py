@@ -30,12 +30,13 @@ class Subscriber_order:
         print("Subscriber_order mqtt broker disconnected")
 
     def __on_message(self, client, userdata, message):
-        data = str(message.payload, encoding="UTF-8")
+        print("message")
+        data = str(message.payload, encoding="utf-8")
         print(data)
 
     def disconnect(self):
         self.client.disconnect()
 
 if __name__ == "__main__":
-    subscriber_order = Subscriber_order("192.168.3.177", 1883, "/ledorder")
+    subscriber_order = Subscriber_order("192.168.3.177", 1883, "#")
     subscriber_order.connect()

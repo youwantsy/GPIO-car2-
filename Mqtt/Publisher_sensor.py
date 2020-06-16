@@ -28,7 +28,7 @@ class Publisher_sensor:
         self.client.loop_forever()
 
     def connect(self):
-        print("connect")
+        print("Sconnect")
         thread = threading.Thread(target=self.__run, daemon=True)
         thread.start()
 
@@ -36,10 +36,10 @@ class Publisher_sensor:
         self.client.disconnect()
 
     def __on_connect(self, client, userdata, flags, rc):
-        print("ImageMqttClient mqtt broker connected")
+        print("SImageMqttClient mqtt broker connected")
 
     def __on_disconnect(self, client, userdata, rc):
-        print("ImageMqttClient mqtt broker disconnected")
+        print("SImageMqttClient mqtt broker disconnected")
 
     def sendBase64(self, frame):
         if self.client.is_connected() is False: # jpg -> cv2.imeconde ->  base64.b64encode
@@ -50,4 +50,13 @@ class Publisher_sensor:
             return
         b64_bytes = base64.b64encode(bytes)
         self.client.publish(self.pubtopic, b64_bytes)
+
+    def read_sensor(self,gas ,thermister, photoresister, tracking, ultra, queue):
+        while True:
+            queue.append({"Gas": gas.read(), "Thermister": thermister.read(), "Ultrasonic": ultra.read(),
+                          "Photoresister": photoresister.read(), "Tracking": tracking.read()})
+            print(queue)
+            time.sleep(0.3)
+            self.client.publish(self.pubtopic, payload=json.dumps(queue.popleft()))
+            time.sleep(0.3)
 #

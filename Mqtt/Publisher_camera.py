@@ -20,7 +20,7 @@ class Publisher_camera:
         self.client.loop_forever()
 
     def connect(self):
-        print("connect")
+        print("Vconnect")
         thread = threading.Thread(target=self.__run, daemon=True)
         thread.start()
 
@@ -28,10 +28,10 @@ class Publisher_camera:
         self.client.disconnect()
 
     def __on_connect(self, client, userdata, flags, rc):
-        print("ImageMqttClient mqtt broker connected")
+        print("VImageMqttClient mqtt broker connected")
 
     def __on_disconnect(self, client, userdata, rc):
-        print("ImageMqttClient mqtt broker disconnected")
+        print("VImageMqttClient mqtt broker disconnected")
 
     def sendBase64(self, frame):
         if self.client.is_connected() is False: # jpg -> cv2.imeconde ->  base64.b64encode
@@ -42,6 +42,21 @@ class Publisher_camera:
             return
         b64_bytes = base64.b64encode(bytes)
         self.client.publish(self.pubtopic , b64_bytes)
+
+    def read_camera(self,video):
+        while True:
+            if video.isOpened():
+                retval, data = video.read()
+                if not retval:
+                    print("read fail")
+                    break
+                self.sendBase64(data)
+            else:
+                break
+
+        video.release()
+        self.disconnect()
+        print("Program exit")
 #
 
 
