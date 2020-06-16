@@ -45,8 +45,13 @@ class Publisher_sensor:
 
     def read_sensor(self,gas ,thermister, photoresister, tracking, ultra, queue):
         while True:
-            queue.append({"Gas": gas.read(), "Thermister": thermister.read(), "Ultrasonic": ultra.read(),
-                          "Photoresister": photoresister.read(), "Tracking": tracking.read()})
+            data = {}
+            data.update({"Gas": gas.read()})
+            data.update({"Thermister": thermister.read()})
+            data.update({"Ultrasonic": ultra.read()})
+            data.update({"Photoresister": photoresister.read()})
+            data.update({"Tracking": tracking.read()})
+            queue.append(data)
             print(queue)
             time.sleep(0.3)
             self.client.publish(self.pubtopic, payload=json.dumps(queue.popleft()))

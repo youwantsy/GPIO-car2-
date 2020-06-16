@@ -46,7 +46,6 @@ class Sensing_Rover():
     def read_camera(self, video):
         publiser_camera.read_camera(video)
 
-
 if __name__ == "__main__":
     sensing_Rover = Sensing_Rover()
 
@@ -60,8 +59,9 @@ if __name__ == "__main__":
 
     publiser_camera = Publisher_camera("192.168.3.177", 1883, "/camerapub")
     publiser_camera.connect()
+
     publisher_sensor = Publisher_sensor("192.168.3.177", 1883, "/sensor")
     publisher_sensor.connect(gas ,thermister, photoresister, tracking, ultra,queue)
 
     while True:
-            pass
+        pass
