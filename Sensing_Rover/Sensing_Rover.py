@@ -11,7 +11,7 @@ from Photoresister import Photoresister
 from Tracking import Tracking
 from Thermistor import Thermistor
 from Gas import Gas
-
+from RgbLed import RgbLed
 from Pcf8591 import Pcf8591
 from collections import deque
 import queue
@@ -40,8 +40,15 @@ class Sensing_Rover():
     def run_laser(self):
         pass
 
-    def run_led(self):
-        pass
+    def run_led(self, orderdata):
+        if orderdata is "R":
+            rgbLed.red()
+        if orderdata is "G":
+            rgbLed.green()
+        if orderdata is "B":
+            rgbLed.blue()
+        if orderdata is "N":
+            rgbLed.off()
 
     def run_buzzer(self):
         pass
@@ -63,6 +70,7 @@ if __name__ == "__main__":
     photoresister = Photoresister(pcf8591, ain=0)
     ultra = HcSr04(trigpin=38, echopin=40)
     queue = deque()
+    rgbLed = RgbLed(16,18,22)
 
     publiser_camera = Publisher_camera("192.168.3.177", 1883, "/camerapub")
     publiser_camera.connect()
@@ -70,5 +78,11 @@ if __name__ == "__main__":
     publisher_sensor = Publisher_sensor("192.168.3.177", 1883, "/sensor", "/ultra")
     publisher_sensor.connect(gas ,thermister, photoresister, tracking, ultra, queue)
 
+    subscriber_order = Subscriber_order("192.168.3.177", 1883, "/ledorder")
+    subscriber_order.connect()
+
     while True:
-        pass
+        orderdata = subscriber_order.data
+        print(orderdata)
+        sensing_Rover.run_led(orderdata)
+        time.sleep(1)

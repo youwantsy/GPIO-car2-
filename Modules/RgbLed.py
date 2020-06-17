@@ -24,26 +24,26 @@ class RgbLed:
         self.state = RgbLed.RED
         if self.__redPin is not None:
             GPIO.output(self.__redPin, GPIO.LOW)
-        # if self.__greenPin is not None:
-        #     GPIO.output(self.__greenPin, GPIO.HIGH)
-        # if self.__bluePin is not None:
-        #     GPIO.output(self.__bluePin, GPIO.HIGH)
+        if self.__greenPin is not None:
+            GPIO.output(self.__greenPin, GPIO.HIGH)
+        if self.__bluePin is not None:
+            GPIO.output(self.__bluePin, GPIO.HIGH)
 
     def green(self):
         self.state = RgbLed.GREEN
-        # if self.__redPin is not None:
-        #     GPIO.output(self.__redPin, GPIO.HIGH)
+        if self.__redPin is not None:
+            GPIO.output(self.__redPin, GPIO.HIGH)
         if self.__greenPin is not None:
             GPIO.output(self.__greenPin, GPIO.LOW)
-        # if self.__bluePin is not None:
-        #     GPIO.output(self.__bluePin, GPIO.HIGH)
+        if self.__bluePin is not None:
+            GPIO.output(self.__bluePin, GPIO.HIGH)
 
     def blue(self):
         self.state = RgbLed.BLUE
-        # if self.__redPin is not None:
-        #     GPIO.output(self.__redPin, GPIO.HIGH)
-        # if self.__greenPin is not None:
-        #     GPIO.output(self.__greenPin, GPIO.HIGH)
+        if self.__redPin is not None:
+            GPIO.output(self.__redPin, GPIO.HIGH)
+        if self.__greenPin is not None:
+            GPIO.output(self.__greenPin, GPIO.HIGH)
         if self.__bluePin is not None:
             GPIO.output(self.__bluePin, GPIO.LOW)
 

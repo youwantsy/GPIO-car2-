@@ -5,6 +5,7 @@ import numpy as np
 import queue
 
 class Subscriber_order:
+    data= None
     def __init__(self,brokerIp, brokerPort, subtopic):
         self.__brokerIp = brokerIp
         self.__brokerPort = brokerPort
@@ -23,16 +24,15 @@ class Subscriber_order:
 
     def __on_connect(self, client, userdata, flags, rc):
         print("Subscriber_order mqtt broker connected")
-        self.on_message = self.__on_message
+        self.client.on_message = self.__on_message
         self.client.subscribe(self.__subtopic)
 
     def __on_disconnect(self):
         print("Subscriber_order mqtt broker disconnected")
 
     def __on_message(self, client, userdata, message):
-        print("message")
-        data = str(message.payload, encoding="utf-8")
-        print(data)
+        self.data = str(message.payload, encoding="utf-8")
+        #print(data)
 
     def disconnect(self):
         self.client.disconnect()
