@@ -1,6 +1,6 @@
 from Modules.Pca9685 import Pca9685
 import time
-
+import threading
 class Sg90:
     def __init__(self, pca9685, channel, frequency=50):
         self.__pca9685 = pca9685
@@ -12,6 +12,18 @@ class Sg90:
 
     def angle(self, angle):
         self.__pca9685.write(self.__channel, self.__map(angle))
+
+    # def patrol(self):
+    #     thread = threading.Thread(target= self.patrol_move,daemon=True)
+    #     thread.start()
+    #     thread.join()
+    def patrol_move(self):
+        for i in range(12,141):
+            self.__pca9685.write(self.__channel, self.__map(i))
+            time.sleep(0.01)
+        for i in range(140, 12, -1):
+            self.__pca9685.write(self.__channel, self.__map(i))
+            time.sleep(0.01)
 
 if __name__ == "__main__":
     pca9685 = Pca9685()

@@ -47,11 +47,14 @@ class Publisher_sensor:
         print("SImageMqttClient mqtt broker disconnected")
 
     def read_ultra(self, ultra):
-        while True:
-            data = {"Ultrasonic":ultra.read()}
-            self.client.publish(self.pubtopic2, payload=json.dumps(data))
-            print(data)
-            time.sleep(1)
+        try:
+            while True:
+                data = {"Ultrasonic":ultra.read()}
+                self.client.publish(self.pubtopic2, payload=json.dumps(data))
+                print(data)
+                time.sleep(1)
+        except Exception:
+            self.read_ultra(ultra)
 
     def read_sensor(self,gas ,thermister, photoresister, tracking, queue):
         data = {}

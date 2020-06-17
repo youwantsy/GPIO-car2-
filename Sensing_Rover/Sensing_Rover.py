@@ -102,8 +102,77 @@ class Sensing_Rover():
 
     def read_camera(self, video):
         publiser_camera.read_camera(video)
+def temperature_read():
+    while True:
+        temperature = thermister.read()
+        time.sleep(1)
+        if temperature > 30:
+            flags[0] = True
+            flags[1] = True
+            flags[3] = True
+            flags[4] = True
+            while True:
+                buzzer.on()
+                rgbLed.off()
+                dc_right.front(channel_right, 30)
+                dc_left.front(channel_left, 30)
+                lcd.write(0,0,"MOTOR OVERHEATED")
+                lcd.write(0,1,"PLZ CALM DOWN!!!")
+                time.sleep(0.5)
+                buzzer.off()
+                rgbLed.red()
+                time.sleep(0.5)
+                if thermister.read() < 30:
+
+                    dc_left.stop()
+                    dc_right.stop()
+                    lcd.clear()
+                    rgbLed.off()
+                    flags[0] = False
+                    flags[1] = False
+                    flags[3] = False
+                    flags[4] = False
+                    break
+def enemy_detect():
+    try:
+        while True:
+            dis = ultra.read()
+            time.sleep(0.3)
+            if dis < 7:
+                flags[0] = True
+                flags[2] = True
+                flags[3] = True
+                flags[4] = True
+                flags[6] = True
+                while True:
+                    dc_left.stop()
+                    dc_right.stop()
+                    lcd.write(0,0,"ENEMY DETECTED")
+                    lcd.write(0,1,"LASER ATTACK!!!")
+                    laser.on()
+
+                    if ultra.read() < 3:
+                        buzzer.on()
+                    else:
+                        buzzer.on()
+                        time.sleep(0.3)
+                        buzzer.off()
+                    if ultra.read() > 7:
+                        lcd.clear()
+                        laser.off()
+                        sh.patrol_move()
+                        sh.angle(90)
+                        flags[0] = False
+                        flags[2] = False
+                        flags[3] = False
+                        flags[4] = False
+                        flags[6] = False
+                        break
+    except Exception:
+        enemy_detect()
 
 if __name__ == "__main__":
+    flags = [False,False,False,False,False,False,False,False,False]
     GPIO.cleanup()
     sensing_Rover = Sensing_Rover()
 
@@ -140,28 +209,36 @@ if __name__ == "__main__":
     subscriber_order = Subscriber_order("192.168.3.177", 1883, "/order/#")
     subscriber_order.connect()
 
+    thread_tem = threading.Thread(target=temperature_read, daemon=True)
+    thread_ult= threading.Thread(target=enemy_detect, daemon=True)
+
+    thread_tem.start()
+    thread_ult.start()
     while True:
         if len(subscriber_order.data) != 0:
+            ##오더 부분
             orderdata = subscriber_order.data.popleft()
 
             k,v = orderdata.popitem()
             print(k)
             print(v)
-            if  k == '/order/buzzer':
+            if  k == '/order/buzzer' and flags[0] == False:
                 sensing_Rover.run_buzzer(v)
-            elif  k == '/order/led':
+            elif  k == '/order/led' and flags[1] == False:
                 sensing_Rover.run_led(v)
-            elif  k == '/order/laser':
+            elif  k == '/order/laser' and flags[2] == False:
                 sensing_Rover.run_laser(v)
-            elif  k == '/order/lcd':
+            elif  k == '/order/lcd' and flags[3] == False:
                 sensing_Rover.run_lcd(v)
-            elif k == '/order/dc':
+            elif k == '/order/dc' and flags[4] == False:
                 sensing_Rover.run_dc(channel_right,channel_left,set_speed,v)
-            elif k == '/order/sv':
+            elif k == '/order/sv' and flags[5] == False:
                 sensing_Rover.run_sg(v)
-            elif k == '/order/sh':
+            elif k == '/order/sh' and flags[6] == False:
                 sensing_Rover.run_sg(v)
-            elif k == '/order/sw':
+            elif k == '/order/sw' and flags[7] == False:
                 sensing_Rover.run_sg(v)
-            elif k == '/order/su':
+            elif k == '/order/su' and flags[8] == False:
                 sensing_Rover.run_sg(v)
+
+        ## 센서값으로만 제어가 되는부분
