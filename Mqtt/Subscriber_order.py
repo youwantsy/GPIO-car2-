@@ -3,9 +3,10 @@ import paho.mqtt.client as mqtt
 import threading
 import numpy as np
 import queue
+from collections import deque
 
 class Subscriber_order:
-    data= None
+    data = deque()
     def __init__(self,brokerIp, brokerPort, subtopic):
         self.__brokerIp = brokerIp
         self.__brokerPort = brokerPort
@@ -31,12 +32,14 @@ class Subscriber_order:
         print("Subscriber_order mqtt broker disconnected")
 
     def __on_message(self, client, userdata, message):
-        self.data = str(message.payload, encoding="utf-8")
+        datadic = {}
+        datadic.update({message.topic:str(message.payload, encoding="UTF-8")})
+        self.data.append(datadic)
         #print(data)
 
     def disconnect(self):
         self.client.disconnect()
 
 if __name__ == "__main__":
-    subscriber_order = Subscriber_order("192.168.3.177", 1883, "/ledorder")
+    subscriber_order = Subscriber_order("192.168.3.177", 1883, "/order/#")
     subscriber_order.connect()
