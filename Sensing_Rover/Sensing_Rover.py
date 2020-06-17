@@ -2,8 +2,10 @@ import threading
 import cv2
 import paho.mqtt.client as mqtt
 import base64
+import RPi.GPIO as GPIO
 from Mqtt.Publisher_camera import Publisher_camera
 from Mqtt.Publisher_sensor import Publisher_sensor
+from Mqtt.Subscriber_order import Subscriber_order
 from HcSr04 import HcSr04
 from Photoresister import Photoresister
 from Tracking import Tracking
@@ -12,6 +14,7 @@ from Gas import Gas
 
 from Pcf8591 import Pcf8591
 from collections import deque
+import queue
 import time
 import json
 
@@ -19,8 +22,11 @@ class Sensing_Rover():
     def __init__(self):
         pass
 
-    def read_sensor(self,gas ,thermister, photoresister, tracking, ultra,queue,):
-        publisher_sensor.read_sensor(gas ,thermister, photoresister, tracking, ultra,queue)
+    def __run(self):
+        pass
+
+    def read_sensor(self,gas ,thermister, photoresister, tracking, queue,):
+        publisher_sensor.read_sensor(gas ,thermister, photoresister, tracking, queue)
 
     def send(self):
         pass
@@ -47,6 +53,7 @@ class Sensing_Rover():
         publiser_camera.read_camera(video)
 
 if __name__ == "__main__":
+    GPIO.cleanup()
     sensing_Rover = Sensing_Rover()
 
     pcf8591 = Pcf8591(0x48)
@@ -60,8 +67,8 @@ if __name__ == "__main__":
     publiser_camera = Publisher_camera("192.168.3.177", 1883, "/camerapub")
     publiser_camera.connect()
 
-    publisher_sensor = Publisher_sensor("192.168.3.177", 1883, "/sensor")
-    publisher_sensor.connect(gas ,thermister, photoresister, tracking, ultra,queue)
+    publisher_sensor = Publisher_sensor("192.168.3.177", 1883, "/sensor", "/ultra")
+    publisher_sensor.connect(gas ,thermister, photoresister, tracking, ultra, queue)
 
     while True:
         pass

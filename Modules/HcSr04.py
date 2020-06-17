@@ -20,34 +20,27 @@ class HcSr04:
 
         startTime = time.time()
         stopTime = time.time()
-
+        count = 0
         # echopin이 High 상태로 변할때까지 기다림
         while GPIO.input(self.__echopin) == GPIO.LOW:
+            count += 1
             startTime = time.time()
-
+            if count > 10000:
+                return self.read()
         # echopin이 Low 상태로 변할때까지 기다림
+        count = 0
         while GPIO.input(self.__echopin) == GPIO.HIGH:
+            count +=1
             stopTime = time.time()
-
+            if count > 10000:
+                return self.read()
         # 거리 계산(단위: cm)
         during = stopTime - startTime
         dist = during * (340 / 2) * 100
-
         return dist
 
 #########################################################
-if __name__ == "__main__":
-    try:
-        sensor = HcSr04(trigpin=38, echopin=40)
-        while True:
-            distance = sensor.read()
-            print("거리: {}".format(distance))
-            time.sleep(0.3)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        GPIO.cleanup()
-        print("Program Exit")
+
 
 
 
