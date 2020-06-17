@@ -3,6 +3,7 @@ import cv2
 import paho.mqtt.client as mqtt
 import base64
 import RPi.GPIO as GPIO
+from Modules.Pca9685 import Pca9685
 from Mqtt.Publisher_camera import Publisher_camera
 from Mqtt.Publisher_sensor import Publisher_sensor
 from Mqtt.Subscriber_order import Subscriber_order
@@ -17,6 +18,8 @@ from collections import deque
 from Buzzer import Buzzer
 from Laser import Laser
 from Lcd1602 import Lcd1602
+from DC_Motor import DC
+from Sg90 import Sg90
 import queue
 import time
 import json
@@ -34,11 +37,38 @@ class Sensing_Rover():
     def send(self):
         pass
 
-    def run_dc(self):
-        pass
+    def run_dc(self,channel_right,channel_left,set_speed,orderdata):
+        if "DCGO" in orderdata:
+            set_speed=int(orderdata.replace("DCGO",""))
+            #for i in range(set_speed):
+            dc_right.front(channel_right, set_speed)
+            dc_left.front(channel_left, set_speed)
+                #time.sleep(0.01)
+        elif orderdata == "DCSTOP":
+            dc_left.stop()
+            dc_right.stop()
 
-    def run_sg(self):
-        pass
+    def run_sg(self, orderdata):
+        if "SVGO" in orderdata:
+            set_angle = int(orderdata.replace("SVGO",""))
+            sv.angle(set_angle)
+        if orderdata == "SVSTOP":
+            sv.angle(12)
+        if "SHGO" in orderdata:
+            set_angle = int(orderdata.replace("SHGO",""))
+            sh.angle(set_angle)
+        if orderdata == "SHSTOP":
+            sh.angle(90)
+        if "SWGO" in orderdata:
+            set_angle = int(orderdata.replace("SWGO", ""))
+            sw.angle(set_angle)
+        if orderdata == "SWSTOP":
+            sw.angle(90)
+        if "SUGO" in orderdata:
+            set_angle = int(orderdata.replace("SUGO", ""))
+            su.angle(set_angle)
+        if orderdata == "SUSTOP":
+            su.angle(80)
 
     def run_laser(self, orderdata):
         if orderdata == "ENABLE":
@@ -89,6 +119,18 @@ if __name__ == "__main__":
     laser = Laser(37)
     lcd = Lcd1602(0x27)
 
+    pca9685 = Pca9685()
+    dc_left = DC(11, 12, pca9685)
+    dc_right = DC(13, 15, pca9685)
+    channel_left = 5
+    channel_right = 4
+    set_speed = 80
+
+    sv = Sg90(pca9685, 0)   # 5~90도   (default = 12도, 줄어들면 LOWER, 커지면 HIGHER)
+    sh = Sg90(pca9685, 1)   # 12~170도   (default = 90도, 줄어들면 RIGHT, 커지면 LEFT)
+    sw = Sg90(pca9685, 14)  # 50~130도   (default = 90도, 줄어들면 LEFT, 커지면 RIGHT)
+    su = Sg90(pca9685, 15)  # 40~120도   (default = 80도, 줄어들면 RIGHT, 커지면 LEFT)
+
     publiser_camera = Publisher_camera("192.168.3.177", 1883, "/camerapub")
     publiser_camera.connect()
 
@@ -113,3 +155,13 @@ if __name__ == "__main__":
                 sensing_Rover.run_laser(v)
             elif  k == '/order/lcd':
                 sensing_Rover.run_lcd(v)
+            elif k == '/order/dc':
+                sensing_Rover.run_dc(channel_right,channel_left,set_speed,v)
+            elif k == '/order/sv':
+                sensing_Rover.run_sg(v)
+            elif k == '/order/sh':
+                sensing_Rover.run_sg(v)
+            elif k == '/order/sw':
+                sensing_Rover.run_sg(v)
+            elif k == '/order/su':
+                sensing_Rover.run_sg(v)

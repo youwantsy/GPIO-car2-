@@ -25,14 +25,14 @@ if __name__ == "__main__":
         sg90_camera_width.angle(i)
         sg90_wheel.angle(i)
         sg90_ultrasonic.angle(i)
-        time.sleep(0.1)
+
 
     for i in range(40):
         sg90_camera_height.angle(90-i)
         sg90_camera_width.angle(90-i)
         sg90_wheel.angle(90-i)
         sg90_ultrasonic.angle(90-i)
-        time.sleep(0.1)
+
 
     sg90_camera_width.angle(90)
     sg90_camera_height.angle(12)
