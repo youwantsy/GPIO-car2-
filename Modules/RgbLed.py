@@ -5,6 +5,7 @@ class RgbLed:
     RED ="red"
     GREEN = "green"
     BLUE = "blue"
+    WHITE = "white"
 
     def __init__(self, redPin=None, greenPin=None, bluePin=None):
         self.__redPin = redPin
@@ -44,6 +45,15 @@ class RgbLed:
             GPIO.output(self.__redPin, GPIO.HIGH)
         if self.__greenPin is not None:
             GPIO.output(self.__greenPin, GPIO.HIGH)
+        if self.__bluePin is not None:
+            GPIO.output(self.__bluePin, GPIO.LOW)
+
+    def white(self):
+        self.state = RgbLed.WHITE
+        if self.__redPin is not None:
+            GPIO.output(self.__redPin, GPIO.LOW)
+        if self.__greenPin is not None:
+            GPIO.output(self.__greenPin, GPIO.LOW)
         if self.__bluePin is not None:
             GPIO.output(self.__bluePin, GPIO.LOW)
 

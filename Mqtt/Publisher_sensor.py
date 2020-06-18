@@ -51,7 +51,7 @@ class Publisher_sensor:
             while True:
                 data = {"Ultrasonic":ultra.read()}
                 self.client.publish(self.pubtopic2, payload=json.dumps(data))
-                print(data)
+                #print(data)
                 time.sleep(1)
         except Exception:
             self.read_ultra(ultra)
