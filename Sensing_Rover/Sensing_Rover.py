@@ -44,6 +44,10 @@ class Sensing_Rover():
             dc_right.front(channel_right, set_speed)
             dc_left.front(channel_left, set_speed)
                 #time.sleep(0.01)
+        elif "DCBACKGO" in orderdata:
+            set_speed = int(orderdata.replace("DCBACKGO", ""))
+            dc_right.back(channel_right, set_speed)
+            dc_left.back(channel_left, set_speed)
         elif orderdata == "DCSTOP":
             dc_left.stop()
             dc_right.stop()
@@ -123,6 +127,10 @@ def temperature_read():
             flags[1] = True
             flags[3] = True
             flags[4] = True
+            flags[5] = True
+            flags[6] = True
+            flags[7] = True
+            flags[8] = True
             while True:
                 buzzer.on()
                 rgbLed.off()
@@ -148,6 +156,10 @@ def temperature_read():
                     flags[1] = False
                     flags[3] = False
                     flags[4] = False
+                    flags[5] = False
+                    flags[6] = False
+                    flags[7] = False
+                    flags[8] = False
                     break
 
 def enemy_detect():
@@ -171,7 +183,10 @@ def enemy_detect():
                 flags[2] = True
                 flags[3] = True
                 flags[4] = True
+                flags[5] = True
                 flags[6] = True
+                flags[7] = True
+                flags[8] = True
                 while True:
                     sv.angle(20)
                     dc_left.stop()
@@ -203,8 +218,10 @@ def enemy_detect():
                         flags[2] = False
                         flags[3] = False
                         flags[4] = False
+                        flags[5] = False
                         flags[6] = False
-
+                        flags[7] = False
+                        flags[8] = False
                         break
             pre_dis = dis
     except Exception:
@@ -229,6 +246,9 @@ def gas_detect():
             flags[3] = True
             flags[4] = True
             flags[5] = True
+            flags[6] = True
+            flags[7] = True
+            flags[8] = True
             while True:
                 dc_right.back(channel_right,80)
                 dc_left.back(channel_left,80)
@@ -257,6 +277,9 @@ def gas_detect():
                     flags[3] = False
                     flags[4] = False
                     flags[5] = False
+                    flags[6] = False
+                    flags[7] = False
+                    flags[8] = False
                     break
 
 def mine_detect():
@@ -277,6 +300,10 @@ def mine_detect():
             flags[1] = True
             flags[3] = True
             flags[4] = True
+            flags[5] = True
+            flags[6] = True
+            flags[7] = True
+            flags[8] = True
             while True:
                 dc_left.stop()
                 dc_right.stop()
@@ -307,6 +334,10 @@ def mine_detect():
                     flags[1] = False
                     flags[3] = False
                     flags[4] = False
+                    flags[5] = False
+                    flags[6] = False
+                    flags[7] = False
+                    flags[8] = False
                     break
 
 def night_mode():
@@ -325,6 +356,10 @@ def night_mode():
             thread_flags[3] = True
             flags[1] = True
             flags[3] = True
+            flags[5] = True
+            flags[6] = True
+            flags[7] = True
+            flags[8] = True
             while True:
                 lcd.write(0,0,"Night Driving")
                 lcd.write(0,1,"Flash ON")
@@ -338,6 +373,10 @@ def night_mode():
                     thread_flags[3] = False
                     flags[1] = False
                     flags[3] = False
+                    flags[5] = False
+                    flags[6] = False
+                    flags[7] = False
+                    flags[8] = False
                     break
 
 
@@ -373,7 +412,7 @@ if __name__ == "__main__":
     su = Sg90(pca9685, 15)  # 40~120도   (default = 80도, 줄어들면 RIGHT, 커지면 LEFT)
 
     publiser_camera = Publisher_camera("192.168.3.177", 1883, "/camerapub")
-    publiser_camera.connect()
+    publiser_camera.connect(gas,thermister, photoresister, tracking,ultra)
 
     publisher_sensor = Publisher_sensor("192.168.3.177", 1883, "/sensor", "/ultra")
     publisher_sensor.connect(gas ,thermister, photoresister, tracking, ultra, queue)
