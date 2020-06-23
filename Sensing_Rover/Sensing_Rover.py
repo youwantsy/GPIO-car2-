@@ -30,84 +30,108 @@ class Sensing_Rover():
 
     def __run(self):
         pass
-
-    def read_sensor(self,gas ,thermister, photoresister, tracking, queue,):
-        publisher_sensor.read_sensor(gas ,thermister, photoresister, tracking, queue)
-
+######################### 센서읽기 #################################################
+    def read_sensor(self,gas ,thermister, photoresister, tracking, queue):
+        try:
+            publisher_sensor.read_sensor(gas ,thermister, photoresister, tracking, queue)
+        except Exception:
+            self.read_sensor(gas,thermister,photoresister,tracking,queue)
     def send(self):
         pass
-
+################################## dc모터 #############################################
     def run_dc(self,channel_right,channel_left,set_speed,orderdata):
-        if "DCGO" in orderdata:
-            set_speed=int(orderdata.replace("DCGO",""))
-            #for i in range(set_speed):
-            dc_right.front(channel_right, set_speed)
-            dc_left.front(channel_left, set_speed)
-                #time.sleep(0.01)
-        elif "DCBACKGO" in orderdata:
-            set_speed = int(orderdata.replace("DCBACKGO", ""))
-            dc_right.back(channel_right, set_speed)
-            dc_left.back(channel_left, set_speed)
-        elif orderdata == "DCSTOP":
-            dc_left.stop()
-            dc_right.stop()
-
+        try:
+            if "DCGO" in orderdata:
+                set_speed=int(orderdata.replace("DCGO",""))
+                #for i in range(set_speed):
+                dc_right.front(channel_right, set_speed)
+                dc_left.front(channel_left, set_speed)
+                    #time.sleep(0.01)
+            elif "DCBACKGO" in orderdata:
+                set_speed = int(orderdata.replace("DCBACKGO", ""))
+                dc_right.back(channel_right, set_speed)
+                dc_left.back(channel_left, set_speed)
+            elif orderdata == "DCSTOP":
+                dc_left.stop()
+                dc_right.stop()
+        except Exception:
+            self.run_dc(channel_right,channel_left,set_speed,orderdata)
+#################################### 서보모터 ########################################
     def run_sg(self, orderdata):
-        if "SVGO" in orderdata:
-            set_angle = int(orderdata.replace("SVGO",""))
-            sv.angle(set_angle)
-        if orderdata == "SVSTOP":
-            sv.angle(12)
-        if "SHGO" in orderdata:
-            set_angle = int(orderdata.replace("SHGO",""))
-            sh.angle(set_angle)
-        if orderdata == "SHSTOP":
-            sh.angle(90)
-        if "SWGO" in orderdata:
-            set_angle = int(orderdata.replace("SWGO", ""))
-            sw.angle(set_angle)
-        if orderdata == "SWSTOP":
-            sw.angle(90)
-        if "SUGO" in orderdata:
-            set_angle = int(orderdata.replace("SUGO", ""))
-            su.angle(set_angle)
-        if orderdata == "SUSTOP":
-            su.angle(80)
+        try:
+            if "SVGO" in orderdata:
+                set_angle = int(orderdata.replace("SVGO",""))
+                sv.angle(set_angle)
+            if orderdata == "SVSTOP":
+                sv.angle(12)
+            if "SHGO" in orderdata:
+                set_angle = int(orderdata.replace("SHGO",""))
+                sh.angle(set_angle)
+            if orderdata == "SHSTOP":
+                sh.angle(90)
+            if "SWGO" in orderdata:
+                set_angle = int(orderdata.replace("SWGO", ""))
+                sw.angle(set_angle)
+            if orderdata == "SWSTOP":
+                sw.angle(90)
+            if "SUGO" in orderdata:
+                set_angle = int(orderdata.replace("SUGO", ""))
+                su.angle(set_angle)
+            if orderdata == "SUSTOP":
+                su.angle(80)
+        except Exception:
+            self.run_sg(orderdata)
+ ############################# 레이저 ##################################
 
     def run_laser(self, orderdata):
-        if orderdata == "ENABLE":
-            laser.on()
-        if orderdata == "DISABLE":
-            laser.off()
+        try:
+            if orderdata == "ENABLE":
+                laser.on()
+            if orderdata == "DISABLE":
+                laser.off()
+        except Exception:
+            self.run_laser(orderdata)
 
+################################ LED##########################
     def run_led(self, orderdata):
-        if orderdata == "R":
-            rgbLed.red()
-        if orderdata == "G":
-            rgbLed.green()
-        if orderdata == "B":
-            rgbLed.blue()
-        if orderdata == "W":
-            rgbLed.white()
-        if orderdata == "N":
-            rgbLed.off()
-
+        try:
+            if orderdata == "R":
+                rgbLed.red()
+            if orderdata == "G":
+                rgbLed.green()
+            if orderdata == "B":
+                rgbLed.blue()
+            if orderdata == "W":
+                rgbLed.white()
+            if orderdata == "N":
+                rgbLed.off()
+        except Exception:
+            self.run_led(orderdata)
+################################ 버저 ################################
     def run_buzzer(self, orderdata):
-        if orderdata == "ON":
-            buzzer.on()
-        if orderdata == "OFF":
-            buzzer.off()
-
-
+        try:
+            if orderdata == "ON":
+                buzzer.on()
+            if orderdata == "OFF":
+                buzzer.off()
+        except Exception:
+            self.run_buzzer(orderdata)
+############################ LCD ###################################
     def run_lcd(self, orderdata):
-        if orderdata == "TURNON":
-            lcd.write(0,0,"*** LCD ON ***")
-            lcd.write(0,1,"M1 ABRAMS")
-        if orderdata == "TURNOFF":
-            lcd.clear()
-
+        try:
+            if orderdata == "TURNON":
+                lcd.write(0,0,"*** LCD ON ***")
+                lcd.write(0,1,"M1 ABRAMS")
+            if orderdata == "TURNOFF":
+                lcd.clear()
+        except Exception:
+            self.run_lcd(orderdata)
+############################## 카메라 ################################
     def read_camera(self, video):
-        publiser_camera.read_camera(video)
+        try:
+            publiser_camera.read_camera(video)
+        except Exception:
+            self.read_camera(orderdata)
 
 def temperature_read():
     while True:
