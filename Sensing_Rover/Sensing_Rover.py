@@ -24,13 +24,25 @@ import queue
 import time
 import json
 
+
+def flagstatus(*args,stats=True):
+    for i in args:
+        flags[i] = stats
+
+
+def thread_flagstatus(*args,stats=True):
+    for i in args:
+        thread_flags[i] = stats
+
+
 class Sensing_Rover():
     def __init__(self):
         pass
 
     def __run(self):
         pass
-######################### 센서읽기 #################################################
+
+    ######################### 센서읽기 #################################################
     def read_sensor(self,gas ,thermister, photoresister, tracking, queue):
         try:
             publisher_sensor.read_sensor(gas ,thermister, photoresister, tracking, queue)
@@ -143,18 +155,8 @@ def temperature_read():
         temperature = thermister.read()
         time.sleep(1)
         if temperature > 30:
-            thread_flags[1] = True
-            thread_flags[2] = True
-            thread_flags[3] = True
-            thread_flags[4] = True
-            flags[0] = True
-            flags[1] = True
-            flags[3] = True
-            flags[4] = True
-            flags[5] = True
-            flags[6] = True
-            flags[7] = True
-            flags[8] = True
+            thread_flagstatus(1,2,3,4,stats=True)
+            flagstatus(0,1,3,4,5,6,7,8,stats=True)
             while True:
                 buzzer.on()
                 rgbLed.off()
@@ -168,22 +170,12 @@ def temperature_read():
                 rgbLed.red()
                 time.sleep(0.5)
                 if thermister.read() < 30:
-                    dc_left.stop()
-                    dc_right.stop()
+                    dc_left.front(channel_left, 80)
+                    dc_right.front(channel_right, 80)
                     lcd.clear()
                     rgbLed.off()
-                    thread_flags[1] = False
-                    thread_flags[2] = False
-                    thread_flags[3] = False
-                    thread_flags[4] = False
-                    flags[0] = False
-                    flags[1] = False
-                    flags[3] = False
-                    flags[4] = False
-                    flags[5] = False
-                    flags[6] = False
-                    flags[7] = False
-                    flags[8] = False
+                    thread_flagstatus(1, 2, 3, 4, stats=False)
+                    flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=False)
                     break
 
 def enemy_detect():
@@ -199,18 +191,8 @@ def enemy_detect():
             time.sleep(0.3)
 
             if abs(pre_dis - dis) < 1 and dis < 7:
-                thread_flags[0] = True
-                thread_flags[2] = True
-                thread_flags[3] = True
-                thread_flags[4] = True
-                flags[0] = True
-                flags[2] = True
-                flags[3] = True
-                flags[4] = True
-                flags[5] = True
-                flags[6] = True
-                flags[7] = True
-                flags[8] = True
+                thread_flagstatus(0, 2, 3, 4, stats=True)
+                flagstatus(0, 2, 3, 4, 5, 6, 7, 8, stats=True)
                 while True:
                     sv.angle(20)
                     dc_left.stop()
@@ -230,22 +212,15 @@ def enemy_detect():
                         lcd.clear()
                         lcd.write(0, 0, "LASER RELEASED")
                         lcd.write(0, 1, "PATROL MODE ON")
+
                         laser.off()
                         sh.patrol_move()
+                        dc_left.front(channel_left, 80)
+                        dc_right.front(channel_right, 80)
                         sh.angle(90)
                         lcd.clear()
-                        thread_flags[0] = False
-                        thread_flags[1] = False
-                        thread_flags[3] = False
-                        thread_flags[4] = False
-                        flags[0] = False
-                        flags[2] = False
-                        flags[3] = False
-                        flags[4] = False
-                        flags[5] = False
-                        flags[6] = False
-                        flags[7] = False
-                        flags[8] = False
+                        thread_flagstatus(0, 2, 3, 4, stats=False)
+                        flagstatus(0, 2, 3, 4, 5, 6, 7, 8, stats=False)
                         break
             pre_dis = dis
     except Exception:
@@ -261,18 +236,8 @@ def gas_detect():
         ggas = gas.read()
         time.sleep(1)
         if ggas > 80:
-            thread_flags[0] = True
-            thread_flags[1] = True
-            thread_flags[3] = True
-            thread_flags[4] = True
-            flags[0] = True
-            flags[1] = True
-            flags[3] = True
-            flags[4] = True
-            flags[5] = True
-            flags[6] = True
-            flags[7] = True
-            flags[8] = True
+            thread_flagstatus(0, 1, 3, 4, stats=True)
+            flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=True)
             while True:
                 dc_right.back(channel_right,80)
                 dc_left.back(channel_left,80)
@@ -289,21 +254,11 @@ def gas_detect():
                 if gas.read() < 80:
                     rgbLed.off()
                     lcd.clear()
-                    dc_left.stop()
-                    dc_right.stop()
+                    dc_left.front(channel_left,80)
+                    dc_right.front(channel_right,80)
                     sv.angle(20)
-                    thread_flags[0] = False
-                    thread_flags[1] = False
-                    thread_flags[3] = False
-                    thread_flags[4] = False
-                    flags[0] = False
-                    flags[1] = False
-                    flags[3] = False
-                    flags[4] = False
-                    flags[5] = False
-                    flags[6] = False
-                    flags[7] = False
-                    flags[8] = False
+                    thread_flagstatus(0, 1, 3, 4, stats=False)
+                    flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=False)
                     break
 
 def mine_detect():
@@ -316,18 +271,8 @@ def mine_detect():
         md = tracking.read()
         time.sleep(1)
         if md == 0:
-            thread_flags[0] = True
-            thread_flags[1] = True
-            thread_flags[2] = True
-            thread_flags[4] = True
-            flags[0] = True
-            flags[1] = True
-            flags[3] = True
-            flags[4] = True
-            flags[5] = True
-            flags[6] = True
-            flags[7] = True
-            flags[8] = True
+            thread_flagstatus(0, 1, 2, 4, stats=True)
+            flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=True)
             while True:
                 dc_left.stop()
                 dc_right.stop()
@@ -348,20 +293,10 @@ def mine_detect():
                     rgbLed.off()
                     buzzer.off()
                     lcd.clear()
-                    dc_left.stop()
-                    dc_right.stop()
-                    thread_flags[0] = False
-                    thread_flags[1] = False
-                    thread_flags[2] = False
-                    thread_flags[4] = False
-                    flags[0] = False
-                    flags[1] = False
-                    flags[3] = False
-                    flags[4] = False
-                    flags[5] = False
-                    flags[6] = False
-                    flags[7] = False
-                    flags[8] = False
+                    dc_left.front(channel_left, 80)
+                    dc_right.front(channel_right, 80)
+                    thread_flagstatus(0, 1, 2, 4, stats=False)
+                    flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=False)
                     break
 
 def night_mode():
@@ -374,16 +309,8 @@ def night_mode():
         lux = photoresister.read()
         time.sleep(1)
         if lux >= 120:
-            thread_flags[0] = True
-            thread_flags[1] = True
-            thread_flags[2] = True
-            thread_flags[3] = True
-            flags[1] = True
-            flags[3] = True
-            flags[5] = True
-            flags[6] = True
-            flags[7] = True
-            flags[8] = True
+            thread_flagstatus(0, 1, 2, 3, stats=True)
+            flagstatus(1, 3, 5, 6, 7, 8, stats=True)
             while True:
                 lcd.write(0,0,"Night Driving")
                 lcd.write(0,1,"Flash ON")
@@ -391,16 +318,8 @@ def night_mode():
                 if photoresister.read() < 120:
                     lcd.clear()
                     rgbLed.off()
-                    thread_flags[0] = False
-                    thread_flags[1] = False
-                    thread_flags[2] = False
-                    thread_flags[3] = False
-                    flags[1] = False
-                    flags[3] = False
-                    flags[5] = False
-                    flags[6] = False
-                    flags[7] = False
-                    flags[8] = False
+                    thread_flagstatus(0, 1, 2, 3, stats=False)
+                    flagstatus(1, 3, 5, 6, 7, 8, stats=False)
                     break
 
 
@@ -485,12 +404,14 @@ if __name__ == "__main__":
             elif k== '/order/mode':
                 if v == 'MODEON':
                     thread_flags = [True,True,True,True,True]
+                    sensing_Rover.run_dc(channel_right, channel_left, set_speed, "DCSTOP")
                     #tensor = np.array(thread_flags)
                     #tensor = tensor+[True]
                     #thread_flags= tensor.tolist()
 
                 else:
                     thread_flags = [False,False,False,False,False]
+                    sensing_Rover.run_dc(channel_right, channel_left,set_speed, "DCGO80")
                     #tensor = np.array(thread_flags)
                     #tensor = tensor * [False]
                     #thread_flags = tensor.tolist()

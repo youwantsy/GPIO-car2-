@@ -54,13 +54,12 @@ class Publisher_camera:
         print("된다")
         while True:
             if video.isOpened():
-
                 retval, data = video.read()
-                # cv2.circle(data, (160, 120), 75, color=(0, 0, 255), thickness=2, lineType=cv2.LINE_4)
-                # cv2.line(data, (160, 70), (160, 20), color=(0, 0, 255), thickness=2, lineType=cv2.LINE_4)
-                # cv2.line(data, (160, 170), (160, 220), color=(0, 0, 255), thickness=2, lineType=cv2.LINE_4)
-                # cv2.line(data, (210, 120), (260, 120), color=(0, 0, 255), thickness=2, lineType=cv2.LINE_4)
-                # cv2.line(data, (110, 120),(60, 120), color=(0, 0, 255), thickness=2, lineType=cv2.LINE_4)
+                cv2.circle(data, (160,80), 40, color=(0, 0, 250), thickness=1, lineType=cv2.LINE_AA)
+                cv2.line(data, (160, 60), (160, 20), color=(0, 0, 250), thickness=1, lineType=cv2.LINE_AA)
+                cv2.line(data, (160, 140), (160, 100), color=(0, 0, 250), thickness=1, lineType=cv2.LINE_AA)
+                cv2.line(data, (220, 80), (180, 80), color=(0, 0, 250), thickness=1, lineType=cv2.LINE_AA)
+                cv2.line(data, (140, 80),(100, 80), color=(0, 0, 250), thickness=1, lineType=cv2.LINE_AA)
                 # cv2.putText(data, "GAS :"+str(gas.read()),(230,180),fontFace=cv2.FONT_HERSHEY_SIMPLEX,fontScale=0.3,color=(255,255,255),thickness=1,lineType=cv2.LINE_AA)
                 # cv2.putText(data, "Thermister :"+str(thermister.read()), (230, 190),fontFace=cv2.FONT_HERSHEY_SIMPLEX,fontScale=0.3, color=(255,255,255), thickness=1, lineType=cv2.LINE_AA)
                 # cv2.putText(data, "Photoresister :"+str(photoresister.read()), (230, 200),fontFace=cv2.FONT_HERSHEY_SIMPLEX,fontScale=0.3, color=(255,255,255), thickness=1, lineType=cv2.LINE_AA)
