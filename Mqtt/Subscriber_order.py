@@ -6,7 +6,7 @@ import queue
 from collections import deque
 
 class Subscriber_order:
-    data = deque()
+    data = queue.Queue()
     def __init__(self,brokerIp, brokerPort, subtopic):
         self.__brokerIp = brokerIp
         self.__brokerPort = brokerPort
@@ -34,7 +34,7 @@ class Subscriber_order:
     def __on_message(self, client, userdata, message):
         datadic = {}
         datadic.update({message.topic:str(message.payload, encoding="UTF-8")})
-        self.data.append(datadic)
+        self.data.put(datadic)
         #print(data)
 
     def disconnect(self):

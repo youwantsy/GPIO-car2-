@@ -1,16 +1,6 @@
 import threading
-import cv2
 import paho.mqtt.client as mqtt
-import base64
-
-from HcSr04 import HcSr04
-from Photoresister import Photoresister
-from Tracking import Tracking
-from Thermistor import Thermistor
-from Gas import Gas
-
-from Pcf8591 import Pcf8591
-from collections import deque
+import queue
 import time
 import json
 
@@ -59,7 +49,6 @@ class Publisher_sensor:
     def read_sensor(self,gas ,thermister, photoresister, tracking, queue):
         data = {}
         while True:
-
             data.update({"Gas": gas.read()})
             time.sleep(0.1)
             data.update({"Thermister": thermister.read()})
@@ -68,10 +57,8 @@ class Publisher_sensor:
             time.sleep(0.1)
             data.update({"Tracking": tracking.read()})
             time.sleep(0.1)
-            queue.append(data)
+            queue.put(data)
             #print(queue)
             time.sleep(0.1)
-            self.client.publish(self.pubtopic, payload=json.dumps(queue.popleft()))
+            self.client.publish(self.pubtopic, payload=json.dumps(queue.get_nowait()))
             time.sleep(0.1)
-#
-#

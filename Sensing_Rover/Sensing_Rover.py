@@ -1,7 +1,4 @@
 import threading
-import cv2
-import paho.mqtt.client as mqtt
-import base64
 import RPi.GPIO as GPIO
 from Modules.Pca9685 import Pca9685
 from Mqtt.Publisher_camera import Publisher_camera
@@ -14,32 +11,24 @@ from Thermistor import Thermistor
 from Gas import Gas
 from RgbLed import RgbLed
 from Pcf8591 import Pcf8591
-from collections import deque
 from Buzzer import Buzzer
 from Laser import Laser
 from Lcd1602 import Lcd1602
 from DC_Motor import DC
 from Sg90 import Sg90
-import queue
 import time
-import json
-
+import queue
 
 def flagstatus(*args,stats=True):
     for i in args:
         flags[i] = stats
 
-
 def thread_flagstatus(*args,stats=True):
     for i in args:
         thread_flags[i] = stats
 
-
 class Sensing_Rover():
     def __init__(self):
-        pass
-
-    def __run(self):
         pass
 
     ######################### 센서읽기 #################################################
@@ -75,7 +64,7 @@ class Sensing_Rover():
                 set_angle = int(orderdata.replace("SVGO",""))
                 sv.angle(set_angle)
             if orderdata == "SVSTOP":
-                sv.angle(12)
+                sv.angle(20)
             if "SHGO" in orderdata:
                 set_angle = int(orderdata.replace("SHGO",""))
                 sh.angle(set_angle)
@@ -94,7 +83,6 @@ class Sensing_Rover():
         except Exception:
             self.run_sg(orderdata)
  ############################# 레이저 ##################################
-
     def run_laser(self, orderdata):
         try:
             if orderdata == "ENABLE":
@@ -103,7 +91,6 @@ class Sensing_Rover():
                 laser.off()
         except Exception:
             self.run_laser(orderdata)
-
 ################################ LED##########################
     def run_led(self, orderdata):
         try:
@@ -132,8 +119,8 @@ class Sensing_Rover():
     def run_lcd(self, orderdata):
         try:
             if orderdata == "TURNON":
-                lcd.write(0,0,"*** LCD ON ***")
-                lcd.write(0,1,"M1 ABRAMS")
+                lcd.write(0,0,"** M1 ABRAMS **")
+                lcd.write(0,1,"MISSON CODE:AIOT")
             if orderdata == "TURNOFF":
                 lcd.clear()
         except Exception:
@@ -145,6 +132,7 @@ class Sensing_Rover():
         except Exception:
             self.read_camera(orderdata)
 
+################# AUTO SENSING - MOTOR TEMPERATURE ##################
 def temperature_read():
     while True:
         if thread_flags[0] == True:
@@ -178,6 +166,7 @@ def temperature_read():
                     flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=False)
                     break
 
+################# AUTO SENSING - ENEMY DETECT ##################
 def enemy_detect():
     try:
         pre_dis = 7
@@ -226,6 +215,7 @@ def enemy_detect():
     except Exception:
         enemy_detect()
 
+################# AUTO SENSING - GAS DETECT ##################
 def gas_detect():
     while True:
         if thread_flags[2] == True:
@@ -261,6 +251,7 @@ def gas_detect():
                     flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=False)
                     break
 
+################ AUTO SENSING - LAND MINE DETECT ###################
 def mine_detect():
     while True:
         if thread_flags[3] == True:
@@ -299,6 +290,7 @@ def mine_detect():
                     flagstatus(0, 1, 3, 4, 5, 6, 7, 8, stats=False)
                     break
 
+################ AUTO SENSING - NIGHT DRIVING MODE ###################
 def night_mode():
     while True:
         if thread_flags[4] ==True:
@@ -336,7 +328,7 @@ if __name__ == "__main__":
     tracking = Tracking(32)
     photoresister = Photoresister(pcf8591, ain=0)
     ultra = HcSr04(trigpin=38, echopin=40)
-    queue = deque()
+    queue = queue.Queue()
     rgbLed = RgbLed(16,18,22)
     buzzer = Buzzer(35)
     laser = Laser(37)
@@ -376,42 +368,40 @@ if __name__ == "__main__":
     thread_night.start()
 
     while True:
-        if len(subscriber_order.data) != 0:
-            ##오더 부분
-            orderdata = subscriber_order.data.popleft()
+        orderdata = subscriber_order.data.get()
 
-            k,v = orderdata.popitem()
-            print(k)
-            print(v)
-            if  k == '/order/buzzer' and flags[0] == False:
-                sensing_Rover.run_buzzer(v)
-            elif  k == '/order/led' and flags[1] == False:
-                sensing_Rover.run_led(v)
-            elif  k == '/order/laser' and flags[2] == False:
-                sensing_Rover.run_laser(v)
-            elif  k == '/order/lcd' and flags[3] == False:
-                sensing_Rover.run_lcd(v)
-            elif k == '/order/dc' and flags[4] == False:
-                sensing_Rover.run_dc(channel_right,channel_left,set_speed,v)
-            elif k == '/order/sv' and flags[5] == False:
-                sensing_Rover.run_sg(v)
-            elif k == '/order/sh' and flags[6] == False:
-                sensing_Rover.run_sg(v)
-            elif k == '/order/sw' and flags[7] == False:
-                sensing_Rover.run_sg(v)
-            elif k == '/order/su' and flags[8] == False:
-                sensing_Rover.run_sg(v)
-            elif k== '/order/mode':
-                if v == 'MODEON':
-                    thread_flags = [True,True,True,True,True]
-                    sensing_Rover.run_dc(channel_right, channel_left, set_speed, "DCSTOP")
-                    #tensor = np.array(thread_flags)
-                    #tensor = tensor+[True]
-                    #thread_flags= tensor.tolist()
+        k,v = orderdata.popitem()
+        print(k)
+        print(v)
+        if  k == '/order/buzzer' and flags[0] == False:
+            sensing_Rover.run_buzzer(v)
+        elif  k == '/order/led' and flags[1] == False:
+            sensing_Rover.run_led(v)
+        elif  k == '/order/laser' and flags[2] == False:
+            sensing_Rover.run_laser(v)
+        elif  k == '/order/lcd' and flags[3] == False:
+            sensing_Rover.run_lcd(v)
+        elif k == '/order/dc' and flags[4] == False:
+            sensing_Rover.run_dc(channel_right,channel_left,set_speed,v)
+        elif k == '/order/sv' and flags[5] == False:
+            sensing_Rover.run_sg(v)
+        elif k == '/order/sh' and flags[6] == False:
+            sensing_Rover.run_sg(v)
+        elif k == '/order/sw' and flags[7] == False:
+            sensing_Rover.run_sg(v)
+        elif k == '/order/su' and flags[8] == False:
+            sensing_Rover.run_sg(v)
+        elif k== '/order/mode':
+            if v == 'MODEON':
+                thread_flags = [True,True,True,True,True]
+                sensing_Rover.run_dc(channel_right, channel_left, set_speed, "DCSTOP")
+                #tensor = np.array(thread_flags)
+                #tensor = tensor+[True]
+                #thread_flags= tensor.tolist()
 
-                else:
-                    thread_flags = [False,False,False,False,False]
-                    sensing_Rover.run_dc(channel_right, channel_left,set_speed, "DCGO80")
-                    #tensor = np.array(thread_flags)
-                    #tensor = tensor * [False]
-                    #thread_flags = tensor.tolist()
+            else:
+                thread_flags = [False,False,False,False,False]
+                sensing_Rover.run_dc(channel_right, channel_left,set_speed, "DCGO80")
+                #tensor = np.array(thread_flags)
+                #tensor = tensor * [False]
+                #thread_flags = tensor.tolist()
