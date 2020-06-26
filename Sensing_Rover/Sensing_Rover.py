@@ -197,6 +197,7 @@ def enemy_detect():
                         buzzer.on()
                         time.sleep(0.3)
                         buzzer.off()
+
                     if ultra.read() > 7:
                         lcd.clear()
                         lcd.write(0, 0, "LASER RELEASED")
@@ -313,7 +314,6 @@ def night_mode():
                     thread_flagstatus(0, 1, 2, 3, stats=False)
                     flagstatus(1, 3, 5, 6, 7, 8, stats=False)
                     break
-
 
 if __name__ == "__main__":
     now_Thread = 0

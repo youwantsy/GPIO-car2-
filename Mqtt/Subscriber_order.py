@@ -1,9 +1,6 @@
-import base64
 import paho.mqtt.client as mqtt
 import threading
-import numpy as np
 import queue
-from collections import deque
 
 class Subscriber_order:
     data = queue.Queue()

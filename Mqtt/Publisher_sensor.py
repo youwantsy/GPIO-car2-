@@ -61,4 +61,5 @@ class Publisher_sensor:
             #print(queue)
             time.sleep(0.1)
             self.client.publish(self.pubtopic, payload=json.dumps(queue.get_nowait()))
+
             time.sleep(0.1)
