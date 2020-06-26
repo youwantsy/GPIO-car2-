@@ -119,8 +119,8 @@ class Sensing_Rover():
     def run_lcd(self, orderdata):
         try:
             if orderdata == "TURNON":
-                lcd.write(0,0,"** M1 ABRAMS **")
-                lcd.write(0,1,"MISSON CODE:AIOT")
+                lcd.write(0,0,"192.168.3.14")
+                lcd.write(0,1,"192.168.3.177")
             if orderdata == "TURNOFF":
                 lcd.clear()
         except Exception:
@@ -132,6 +132,8 @@ class Sensing_Rover():
         except Exception:
             self.read_camera(orderdata)
 
+# flags = ["buzzer","led","laser","lcd","dc","sv","sh","sw","su"]
+# thread_flags index = ["temperature","ultrasonic","gas","tracking","photo"]
 ################# AUTO SENSING - MOTOR TEMPERATURE ##################
 def temperature_read():
     while True:
